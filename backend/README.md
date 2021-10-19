@@ -16,6 +16,10 @@ composer install
 indicar a base de dados 
 
 ```
+### Criar as tabelas e popular tabela "users" com registros de teste
+```bash
+Rodar o comando php artisan migrate --seed
+```
 
 ### Gerar a chave da aplicação
 ```bash
