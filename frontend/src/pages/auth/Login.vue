@@ -17,7 +17,8 @@
             hint="Informe o email"
             lazy-rules
             :rules="[
-              (val) => (val && val.length > 3) || 'Informe um email valido' ]"
+              (val) => (val && val.length > 3) || 'Informe um email valido',
+            ]"
             class="col-md-12 col-sm-12 col-xs-12"
           />
           <q-input
@@ -29,7 +30,7 @@
             label="Senha *"
             hint="Digite a senha"
             lazy-rules
-            :rules="[(val) => (val && val.length > 0 ) || 'Informe a senha']"
+            :rules="[(val) => (val && val.length > 0) || 'Informe a senha']"
             class="col-md-12 col-sm-12 col-xs-12"
           />
           <div>
@@ -60,25 +61,45 @@ export default defineComponent({
 
   methods: {
     onSubmit() {
-      this.$api.post("/login", this.form).then(
-        (res) => {
-          window.localStorage.setItem("USER_TOKEN", res.data.token);
-          this.onReset();
-        },
-        (error) => {
-          this.error = true;
-          window.localStorage.removeItem("USER_TOKEN");
-          this.$q.notify({
-            color: "negative",
-            position: "top",
-            message: error.response.data.message,
-            icon: "report_problem",
-            progress: true
-          });
-        }
-      );
-
-      
+      this.$api
+        .post("/login", this.form)
+        .then(
+          (res) => {
+            window.localStorage.setItem("USER_TOKEN", res.data.token);
+            this.onReset();
+          },
+          (error) => {
+            this.error = true;
+            window.localStorage.removeItem("USER_TOKEN");
+            return Promise.reject(error);
+          }
+        )
+        .catch((error) => {
+          if (error.response) {
+            console.error(error.message);
+            this.msgError(error.response.data.message);
+          } else if (error.request) {
+            console.error(error.message);
+            this.msgError(
+              `Erro ao tentar comunicar com servidor: ${error.message}`
+            );
+          } else {
+            console.error(error.request);
+            console.error(error.message);
+            this.msgError(
+              `Erro ao fazer requisição ao servidor: ${error.message}`
+            );
+          }
+        });
+    },
+    msgError(message) {
+      this.$q.notify({
+        color: "negative",
+        position: "top",
+        message: message,
+        icon: "report_problem",
+        progress: true,
+      });
     },
     onReset() {
       this.form = {
