@@ -84,7 +84,7 @@ class Handler extends ExceptionHandler
             if ($request->is('api/*')) {
                 return response()->json([
                     'status' => $e->status,
-                    'message' =>  $e->validator->getMessageBag(),
+                    'message' =>  $e->validator->errors()->all(),
                 ], 422);
             }
         });

@@ -17,8 +17,7 @@
             hint="Informe o email"
             lazy-rules
             :rules="[
-              (val) => (val && val.length > 3) || 'Informe um email valido',
-            ]"
+              (val) => (val && val.length > 3) || 'Informe um email valido' ]"
             class="col-md-12 col-sm-12 col-xs-12"
           />
           <q-input
@@ -30,7 +29,7 @@
             label="Senha *"
             hint="Digite a senha"
             lazy-rules
-            :rules="[(val) => val && val.length > 0 || 'Informe a senha']"
+            :rules="[(val) => (val && val.length > 0 ) || 'Informe a senha']"
             class="col-md-12 col-sm-12 col-xs-12"
           />
           <div>
@@ -44,30 +43,42 @@
 
 <script>
 import { defineComponent } from "vue";
+import { useQuasar } from "quasar";
 
 export default defineComponent({
   name: "PageLogin",
+
   data() {
     return {
-      
+      error: false,
       form: {
-        email: "",
-        password: "",
+        email: "lkessler@example.net",
+        password: "passwordq",
       },
     };
   },
 
   methods: {
     onSubmit() {
+      this.$api.post("/login", this.form).then(
+        (res) => {
+          window.localStorage.setItem("USER_TOKEN", res.data.token);
+          this.onReset();
+        },
+        (error) => {
+          this.error = true;
+          window.localStorage.removeItem("USER_TOKEN");
+          this.$q.notify({
+            color: "negative",
+            position: "top",
+            message: error.response.data.message,
+            icon: "report_problem",
+            progress: true
+          });
+        }
+      );
 
-      this.$q.notify({
-        message: 'Cadastro realizado com sucesso',
-         progress: true,
-        type: 'positive',
-        
-        
-      })
-      this.onReset();
+      
     },
     onReset() {
       this.form = {
