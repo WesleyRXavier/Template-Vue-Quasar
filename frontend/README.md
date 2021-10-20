@@ -1,22 +1,16 @@
-# Quasar App (frontend)
+## Frontend
 
-A Quasar Framework app
+Frontend desenvolvido utilizando Vue.js com framework Quasar 2.14
 
-## Install the dependencies
+## Instale as dependencias
 ```bash
 npm install
 ```
 
-### Start the app in development mode (hot-code reloading, error reporting, etc.)
+### Inicei a aplicação
 ```bash
-quasar dev
+quasar dev ou quasar dev --port=XXXX para selecionar a porta utilizada
 ```
 
 
-### Build the app for production
-```bash
-quasar build
-```
 
-### Customize the configuration
-See [Configuring quasar.conf.js](https://quasar.dev/quasar-cli/quasar-conf-js).
