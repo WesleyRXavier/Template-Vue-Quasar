@@ -44,8 +44,6 @@
 
 <script>
 import { defineComponent } from "vue";
-import { useQuasar } from "quasar";
-
 export default defineComponent({
   name: "PageLogin",
 
@@ -54,7 +52,7 @@ export default defineComponent({
       error: false,
       form: {
         email: "lkessler@example.net",
-        password: "passwordq",
+        password: "password",
       },
     };
   },
@@ -66,11 +64,12 @@ export default defineComponent({
         .then(
           (res) => {
             window.localStorage.setItem("USER_TOKEN", res.data.token);
+            this.$router.push({ name:'home' })
             this.onReset();
+            
           },
           (error) => {
-            this.error = true;
-            window.localStorage.removeItem("USER_TOKEN");
+            localStorage.removeItem("USER_TOKEN");
             return Promise.reject(error);
           }
         )
@@ -94,11 +93,12 @@ export default defineComponent({
     },
     msgError(message) {
       this.$q.notify({
-        color: "negative",
         position: "top",
+        icon: "ion-close",
+        color: "negative",
         message: message,
-        icon: "report_problem",
         progress: true,
+        actions: [{ icon: "close", color: "white" }],
       });
     },
     onReset() {

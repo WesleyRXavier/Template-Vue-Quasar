@@ -1,4 +1,4 @@
-import { Notify } from 'quasar';
+
 
 const routes = [
   {
@@ -14,23 +14,10 @@ const routes = [
 
   {
     path: '/admin',
-    component: () => import('layouts/AdminLayout.vue'),
-    beforeEnter: (to, from, next) => {
-      const logado = false;
-      Notify.create({
-        icon: 'ion-close',
-        color: 'neagtive',
-        message: 'Nao existe usuario logado',
-        progress: true,
-        actions:[{icon: 'close',color:'white'}]
-        
-
-      })
-      next('/login')
-    },
+    component: () => import('layouts/AdminLayout.vue'), 
     children: [
-      { path: 'profile', component: () => import('pages/auth/Login.vue') },
-      { path: 'cadastro', component: () => import('pages/auth/Register.vue') }
+      { path: 'home',name:'home', component: () => import('pages/admin/Home.vue') },
+      
     ],
 
   },
