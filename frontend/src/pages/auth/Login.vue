@@ -7,7 +7,7 @@
           @reset="onReset"
           class="q-gutter-md"
           ref="loginForm"
-        >
+          >{{ error }}
           <q-input
             filled
             clearable
@@ -20,6 +20,8 @@
               (val) => (val && val.length > 3) || 'Informe um email valido',
             ]"
             class="col-md-12 col-sm-12 col-xs-12"
+            :error="error"
+            @change="clearError"
           />
           <q-input
             filled
@@ -32,6 +34,8 @@
             lazy-rules
             :rules="[(val) => (val && val.length > 0) || 'Informe a senha']"
             class="col-md-12 col-sm-12 col-xs-12"
+            :error="error"
+            @change="clearError"
           />
           <div>
             <q-btn label="Entrar" type="submit" color="green" />
@@ -44,6 +48,7 @@
 
 <script>
 import { defineComponent } from "vue";
+import { mapActions } from "vuex";
 export default defineComponent({
   name: "PageLogin",
 
@@ -58,48 +63,18 @@ export default defineComponent({
   },
 
   methods: {
-    onSubmit() {
-      this.$api
-        .post("/login", this.form)
-        .then(
-          (res) => {
-            window.localStorage.setItem("USER_TOKEN", res.data.token);
-            this.$router.push({ name:'home' })
-            this.onReset();
-            
-          },
-          (error) => {
-            localStorage.removeItem("USER_TOKEN");
-            return Promise.reject(error);
-          }
-        )
-        .catch((error) => {
-          if (error.response) {
-            console.error(error.message);
-            this.msgError(error.response.data.message);
-          } else if (error.request) {
-            console.error(error.message);
-            this.msgError(
-              `Erro ao tentar comunicar com servidor: ${error.message}`
-            );
-          } else {
-            console.error(error.request);
-            console.error(error.message);
-            this.msgError(
-              `Erro ao fazer requisição ao servidor: ${error.message}`
-            );
-          }
-        });
-    },
-    msgError(message) {
-      this.$q.notify({
-        position: "top",
-        icon: "ion-close",
-        color: "negative",
-        message: message,
-        progress: true,
-        actions: [{ icon: "close", color: "white" }],
-      });
+    ...mapActions("app", ["LOGIN"]),
+    async onSubmit() {
+      try {
+        await this.LOGIN(this.form);
+        this.$router.push({ name: "home" });
+        this.onReset();
+  
+
+      } catch (err) {
+        this.error = true;
+        
+      }
     },
     onReset() {
       this.form = {
@@ -107,6 +82,9 @@ export default defineComponent({
         email: "",
       };
       this.$refs.loginForm.resetValidation();
+    },
+    clearError() {
+      this.error = false;
     },
   },
 });
